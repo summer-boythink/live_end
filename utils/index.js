@@ -9,7 +9,7 @@ exports.execsql = function (sql){
             }else{
                 res(data)
             }
-        })
+        }) 
     })
 }
 
@@ -17,13 +17,13 @@ exports.exec = function (f) {
     return new Promise((res,rej) => {
         f(res,rej)
     })
-}
+} 
 
 
 exports.tomd5 = function(str){
     let obj = crypto.createHash('md5')
     obj.update(str)
-    return obj.digest('hex')
+    return obj.digest('hex') 
 }
 
 exports.generate_room = function(telephone,user){

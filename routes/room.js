@@ -1,8 +1,9 @@
 const router = require('koa-router')()
-const {execsql,isFormData} = require('../utils/index')
+const {execsql,isFormData,exec} = require('../utils/index')
 const cos = require('../utils/cos')
 const formidable = require('formidable')
 const fs = require('fs');
+const redis = require('../db/redis_init');
 router.prefix('/room')
 
 
@@ -93,5 +94,59 @@ router.post('/setRoom',async(ctx,next) => {
         msg:"直播间修改成功"
     }
 })
+ 
+router.get('/isFollow',async(ctx,next) => {
+    let {RoomId} = ctx.query;
+    //查看redis里面是否有这个人关注列表
+    let data =await exec((res,rej) => {
+        redis.smembers(`${ctx.user}`,(err,data) => {
+            console.log(data);
+            if(data.length === 0){
+                res([])
+            }else{ 
+                res(data)
+            }
+        })
+    })
+    if(data.length === 0){
+        ctx.body = {
+            status:200,
+            isFollow:false
+        }
+    }else{
+        ctx.body = {
+            status:200,
+            isFollow:data.indexOf(RoomId) !== -1
+        } 
+    } 
+})
+ 
+router.get('/toFollow',async(ctx,next) => {
+    let {RoomId} = ctx.query;
+    await exec((res,rej) => {
+        redis.sadd(ctx.user,RoomId,() => {
+            res()
+        })
+    })
+    await execsql(`update room set followers=followers+1 where id='${RoomId}'`)
+    ctx.body = {
+        status:200,
+        msg:"关注成功"
+    }
+})
 
-module.exports = router 
+router.get('/cancelFollow',async(ctx,next) => {
+    let {RoomId} = ctx.query;
+    await exec((res,rej) => {
+        redis.srem(ctx.user,RoomId,() => {
+            res()
+        })
+    })
+    await execsql(`update room set followers=followers-1 where id='${RoomId}'`)
+    ctx.body = {
+        status:200,
+        msg:"取消关注成功"
+    }
+}) 
+
+module.exports = router

@@ -42,8 +42,8 @@ app.use(async (ctx,next) => {
   console.log(ctx.url.indexOf("/users"));
   if(ctx.url !=='/' && ctx.url.indexOf("users") === -1){
     if(ctx.headers['th-auth']){
-        let token = ctx.headers['th-auth']
-        // console.log(token);
+        let token = ctx.headers['th-auth']  
+        // console.log(token); 
         let jwt = new Jwt(token);
         let result = jwt.verifyToken();
         console.log(result)

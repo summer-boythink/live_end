@@ -59,8 +59,8 @@ router.post('/register',async (ctx,next) => {
     return ctx.body = {
       status:500,
       message:"err"
-    }
-  }
+    } 
+  }  
 })
 
 router.post('/login',async (ctx,next) => {
@@ -86,5 +86,5 @@ router.post('/login',async (ctx,next) => {
   }
 })
 
- 
+
 module.exports = router
