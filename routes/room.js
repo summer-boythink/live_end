@@ -85,7 +85,7 @@ router.get("/getImg",async (ctx,next) => {
         img_url:res[0].img_url
     }
 })
-
+ 
 router.post('/setRoom',async(ctx,next) => {
     let {name,sort} = ctx.request.body;
     await execsql(`update room set name='${name}',sort='${sort}' where id=(SELECT room_id from user WHERE user='${ctx.user}')`)
@@ -101,7 +101,7 @@ router.get('/isFollow',async(ctx,next) => {
     let data =await exec((res,rej) => {
         redis.smembers(`${ctx.user}`,(err,data) => {
             console.log(data);
-            if(data.length === 0){
+            if(data === undefined){
                 res([])
             }else{ 
                 res(data)
@@ -148,5 +148,24 @@ router.get('/cancelFollow',async(ctx,next) => {
         msg:"取消关注成功"
     }
 }) 
+
+router.get('/getAllGift',async(ctx,next) => {
+    let result = await execsql(`select * from gift`)
+    // console.log(result[0]);
+    ctx.body = {
+        status:200,
+        result 
+    }
+}) 
+
+router.get('/getRoomUser',async(ctx,next) => {
+    let {RoomId} = ctx.query;
+    let result = await execsql(`select user,avatar from user where room_id='${RoomId}'`)
+    ctx.body = {
+        status:200,
+        user:result[0].user,
+        url:result[0].avatar
+    }
+})
 
 module.exports = router

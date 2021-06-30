@@ -47,8 +47,8 @@ router.post('/register',async (ctx,next) => {
           message:"fail"
         }
   }
-  let res1 = await execsql(`insert into user (user,password,telephone,room_id) values ('${username}','${md5pass}','${phone}','${room}')`)
-  let res2 = await execsql(`insert into room (id) values ('${room}')`)
+  let res1 = await execsql(`insert into user (user,password,telephone,room_id,avatar) values ('${username}','${md5pass}','${phone}','${room}','https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png')`)
+  let res2 = await execsql(`insert into room (id,followers,profit) values ('${room}',0,0)`)
   console.log(res1,code);
   if(res1.affectedRows > 0 && res2.affectedRows > 0){
     return ctx.body = {
@@ -86,5 +86,6 @@ router.post('/login',async (ctx,next) => {
   }
 })
 
-
-module.exports = router
+ 
+module.exports = router 
+ 
